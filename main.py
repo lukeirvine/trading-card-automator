@@ -4,7 +4,8 @@ import textwrap
 import os
 import json
 
-def add_front_text(canvas, draw, texts):
+def add_front_text(canvas, texts):
+  draw = ImageDraw.Draw(canvas)
   # set base margin
   y = canvas.height - 30
 
@@ -41,6 +42,13 @@ def add_front_text(canvas, draw, texts):
     # adjust y for margin
     y += text['margin_bottom']
 
+def add_stars(canvas, years):
+  star = Image.open("materials/star.png")
+  paste_alpha = star.split()[-1]
+  for i in range(years):
+    x = 450 - ((i % 6) * 35)
+    y = 37 - (i // 6) * 30
+    canvas.paste(star, (x, y), mask=paste_alpha)
 
 # Set the position of the name on the card
 name_position = (50, 50)
@@ -74,7 +82,6 @@ for card_data in data:
   canvas.paste(border, (0, 0), mask=paste_alpha)
 
   # Add the name to the card
-  draw = ImageDraw.Draw(canvas)
   texts = [{
     "text": position,
     "size": 24,
@@ -87,7 +94,10 @@ for card_data in data:
     "width": 12,
     "margin_bottom": 5
   })
-  add_front_text(canvas, draw, texts)
+  add_front_text(canvas, texts)
+
+  # add stars
+  add_stars(canvas, card_data['years'])
 
   # Get date for folder name
   current_datetime = datetime.datetime.now()
