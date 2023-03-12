@@ -1,0 +1,11 @@
+{
+  "luke_irvine": {
+    "img": "luke.png",
+    "name": "Luke Irvine",
+    "positions": [
+      "Assistant Director",
+      "Boat Driver"
+    ],
+    "years": 8
+  }
+}
