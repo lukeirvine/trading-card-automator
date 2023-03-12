@@ -97,3 +97,15 @@ def add_back_text(canvas, info):
     # margin below text
     y += 15
     
+def add_print_border(card, color):
+  canvas = Image.new("RGB", (666, 915), color=color)
+
+  # add the print border
+  border = Image.open("materials/print-border.png")
+  paste_alpha = border.split()[-1]
+  canvas.paste(border, (0, 0), mask=paste_alpha)
+
+  # add the card
+  canvas.paste(card, ((666 - 500) // 2, (915 - 700) // 2))
+
+  return canvas

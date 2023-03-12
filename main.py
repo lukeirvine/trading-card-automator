@@ -5,6 +5,8 @@ import os
 import json
 import functions
 
+PRINT = True
+
 # Colors for border based on department
 border_colors = {
   'leadership': (60, 89, 115)
@@ -86,6 +88,11 @@ for card_data in data:
   folder_path = "output"
   if not os.path.exists(folder_path):
     os.makedirs(folder_path)
+
+  # add print borders
+  if PRINT:
+    canvas = functions.add_print_border(canvas, border_color)
+    canvas_back = functions.add_print_border(canvas_back, border_color)
 
   # Save the trading card as a PNG image
   canvas.save(f"{folder_path}/{card_data['img'].split('.')[0]}_front.png")
