@@ -1,6 +1,14 @@
 # Mivoden Trading Card Automator
 This Python script takes a csv file and profile photos and creates stylized trading cards. It was created for [Camp Mivoden](https://www.mivoden.com/) to create staff trading cards for summer 2023.
 
+<div style="display:flex; justify-content: space-between">
+  <img src="https://i.imgur.com/b4K55e3.png" width="24%" />
+  <img src="https://i.imgur.com/PZ312i7.png" width="24%" />
+  <img src="https://i.imgur.com/GruGh5Z.png" width="24%" />
+  <img src="https://i.imgur.com/gd0zLR9.png" width="24%" />
+</div>
+<br>
+
 ## Instructions
 1. Create a csv file with the following values in the following order:
 
