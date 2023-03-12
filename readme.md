@@ -18,7 +18,7 @@ This Python script creates stylized trading cards from a spreadsheet. It was cre
     
     ### Other Rules for data:
     - If there are multiple positions, they must be separated by a semi-colon and space `"; "`
-    - The years column must have integers, nothing else (whole numbers)
+    - The years column must have integers, nothing else (whole numbers), and be 12 or less.
     - The department must be in this list and spelled correctly with no caps:
       ```
       leadership, extreme, housekeeping, office, waterfront, activities, art, challenge, comms, dt, equestrian, kitchen, maintenance, survival, ultimate
