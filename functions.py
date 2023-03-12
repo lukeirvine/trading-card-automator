@@ -1,6 +1,7 @@
 from PIL import Image, ImageDraw, ImageFont
 import textwrap
 import csv
+import os
 
 def add_front_text(canvas, texts):
   draw = ImageDraw.Draw(canvas)
@@ -121,31 +122,55 @@ def read_csv_file():
     header = next(reader)
 
     # Iterate through subsequent rows
+    i = 0
     for row in reader:
-      positions = row[2].split('; ')
-      data.append({
-        "img": row[0],
-        "name": row[1],
-        "positions": positions,
-        "years": int(row[3]),
-        "department": row[4],
-        "info": [
-         {
-          "title": row[5],
-          "text": row[6]
-         },
-         {
-          "title": row[7],
-          "text": row[8]
-         },
-         {
-          "title": row[9],
-          "text": row[10]
-         },
-         {
-          "title": row[11],
-          "text": row[12]
-         },
-        ]
-      })
+      try:
+        positions = row[2].split('; ')
+        data.append({
+          "img": row[0],
+          "name": row[1],
+          "positions": positions,
+          "years": int(row[3]),
+          "department": row[4],
+          "info": [
+          {
+            "title": row[5],
+            "text": row[6]
+          },
+          {
+            "title": row[7],
+            "text": row[8]
+          },
+          {
+            "title": row[9],
+            "text": row[10]
+          },
+          {
+            "title": row[11],
+            "text": row[12]
+          },
+          ]
+        })
+      except IndexError:
+        raise RuntimeError(f"Your csv file is missing some values on line {i + 2}. Check the readme file for required columns")
+      i += 1
   return data
+
+def check_data(data, border_colors):
+  i = 0
+  for card in data:
+    # check that image exists
+    img_path = card['img']
+    if not os.path.exists('images/' + img_path):
+      raise RuntimeError(f"The image \"{card['img']}\" for {card['name']} doesn't exist. Check line {i + 2} in the csv file.")
+
+    # check that department is valid
+    if card['department'] not in border_colors:
+      error = f"The department \"{card['department']}\" is not valid. Valid departments are:\n"
+      for dep in border_colors.keys():
+        error += dep + "\n"
+      error += f"This error occurred in line {i + 2} of the csv file."
+      raise RuntimeError(error)
+    
+    # check that info is valid
+    i += 1

@@ -27,6 +27,7 @@ border_colors = {
 }
 
 data = functions.read_csv_file()
+functions.check_data(data, border_colors)
 num_cards = len(data)
 done_processing = 0
 
