@@ -1,5 +1,5 @@
 # Mivoden Trading Card Automator
-This Python script takes a csv file and profile photos and creates stylized trading cards. It was created for [Camp Mivoden](https://www.mivoden.com/) to create staff trading cards for summer 2023.
+This Python script creates stylized trading cards from a spreadsheet. It was created for [Camp Mivoden](https://www.mivoden.com/) to create staff trading cards for summer 2023.
 
 <div style="display:flex; justify-content: space-between">
   <img src="https://i.imgur.com/b4K55e3.png" width="24%" />
@@ -25,6 +25,7 @@ This Python script takes a csv file and profile photos and creates stylized trad
       ```
     - All 4 questions and answers must be present
 2. Add the csv file to the root directory and label it `data.csv`
+    - Note: you can get this from any spreadsheet by exporting it as a `csv`
 3. Add images for the cards to a directory titled `images` in the root directory.
     - Your images need to have an aspect ratio of `5:7` or it will be distorted. `500x700px` is recommended
     - Make sure an image exists for every entry to the `image` column in `data.csv` and that they are spelled correctly and case sensitive.
