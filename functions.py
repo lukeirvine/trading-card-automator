@@ -181,6 +181,10 @@ def check_data(data, border_colors):
     img_path = card['img']
     if not os.path.exists('images/' + img_path):
       raise RuntimeError(f"The image \"{card['img']}\" for {card['name']} doesn't exist. Check line {i + 2} in the csv file.")
+    
+    # check that name is valid
+    if "/" in card['name']:
+      raise RuntimeError(f"The name column on row {i + 2} should not contain '/'")
 
     # check that department is valid
     if card['department'] not in border_colors:
