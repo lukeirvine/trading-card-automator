@@ -127,7 +127,7 @@ def read_csv_file():
         "img": row[0],
         "name": row[1],
         "positions": positions,
-        "years": row[3],
+        "years": int(row[3]),
         "department": row[4],
         "info": [
          {

@@ -26,13 +26,9 @@ border_colors = {
   'ultimate': (217, 109, 85)
 }
 
-# Get data for the cards
-with open('data.json', 'r') as f:
-  data = json.load(f)
-
-data = data.values()
-
 data = functions.read_csv_file()
+num_cards = len(data)
+done_processing = 0
 
 outputs = []
 
@@ -107,13 +103,14 @@ for card_data in data:
     "back": canvas_back,
     "name": card_data['name']
   })
+  done_processing += 1
+  print("\rDone Processing: " + str(done_processing) + "/" + str(num_cards), end="", flush=True)
 
-  # Save the trading card as a PNG image
-  # canvas.save(f"{folder_path}/{card_data['img'].split('.')[0]}_front.png")
-  # canvas_back.save(f"{folder_path}/{card_data['img'].split('.')[0]}_back.png")
-  print("card made for " + card_data['name'])
+# new line
+print("")
 
 # print all the made files at once
+printed = 0
 for output in outputs:
   # Get date for folder name
   current_datetime = datetime.datetime.now()
@@ -131,4 +128,7 @@ for output in outputs:
   # save files
   output['front'].save(f"{folder_path}/{name}_front.png")
   output['back'].save(f"{folder_path}/{name}_back.png")
-  print("cards printed for " + name)
+  printed += 1
+  print("\rPrinted: " + str(printed) + "/" + str(num_cards), end="", flush=True)
+# Print new line to end
+print("")
