@@ -32,6 +32,8 @@ with open('data.json', 'r') as f:
 
 data = data.values()
 
+data = functions.read_csv_file()
+
 outputs = []
 
 for card_data in data:

@@ -1,5 +1,6 @@
 from PIL import Image, ImageDraw, ImageFont
 import textwrap
+import csv
 
 def add_front_text(canvas, texts):
   draw = ImageDraw.Draw(canvas)
@@ -109,3 +110,42 @@ def add_print_border(card, color):
   canvas.paste(card, ((666 - 500) // 2, (915 - 700) // 2))
 
   return canvas
+
+
+def read_csv_file():
+  data = []
+  with open('data.csv', newline='') as csvfile:
+    reader = csv.reader(csvfile, delimiter=',', quotechar='"')
+
+    # consume the first row (header)
+    header = next(reader)
+
+    # Iterate through subsequent rows
+    for row in reader:
+      positions = row[2].split('; ')
+      data.append({
+        "img": row[0],
+        "name": row[1],
+        "positions": positions,
+        "years": row[3],
+        "department": row[4],
+        "info": [
+         {
+          "title": row[5],
+          "text": row[6]
+         },
+         {
+          "title": row[7],
+          "text": row[8]
+         },
+         {
+          "title": row[9],
+          "text": row[10]
+         },
+         {
+          "title": row[11],
+          "text": row[12]
+         },
+        ]
+      })
+  return data
