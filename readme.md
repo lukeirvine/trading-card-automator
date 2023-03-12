@@ -1,4 +1,5 @@
 # Mivoden Trading Card Automator
+This Python script takes a csv file and profile photos and creates stylized trading cards. It was created for [Camp Mivoden](https://www.mivoden.com/) to create staff trading cards for summer 2023.
 
 ## Instructions
 1. Create a csv file with the following values in the following order:
