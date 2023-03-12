@@ -2,6 +2,7 @@ from PIL import Image, ImageDraw, ImageFont
 import textwrap
 import csv
 import os
+from datetime import datetime
 
 def add_front_text(canvas, texts):
   draw = ImageDraw.Draw(canvas)
@@ -99,7 +100,7 @@ def add_back_text(canvas, info):
     # margin below text
     y += 15
     
-def add_print_border(card, color):
+def add_print_border(card, color, path):
   canvas = Image.new("RGB", (666, 915), color=color)
 
   # add the print border
@@ -109,6 +110,20 @@ def add_print_border(card, color):
 
   # add the card
   canvas.paste(card, ((666 - 500) // 2, (915 - 700) // 2))
+
+  # add time
+  font = ImageFont.truetype("fonts/PTMono-Regular.ttf", 13)
+  draw = ImageDraw.Draw(canvas)
+  now = datetime.now()
+  formatted_time = now.strftime("%m/%d/%y  %I:%M:%S %p")
+  time_width = draw.textsize(formatted_time, font=font)[0]
+  time_height = font.getsize(formatted_time)[1]
+  x = canvas.width - time_width - 10
+  y = canvas.height - time_height - 10
+  draw.text((x, y), formatted_time, fill=(0, 0, 0), font=font)
+
+  # add file name
+  draw.text((10, y), path, fill=(0, 0, 0), font=font)
 
   return canvas
 

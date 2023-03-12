@@ -104,8 +104,10 @@ for card_data in data:
 
   # add print borders
   if PRINT:
-    canvas = functions.add_print_border(canvas, border_color)
-    canvas_back = functions.add_print_border(canvas_back, border_color)
+    path_front = card_data['name'].lower().replace(" ", "_") + "_front.png"
+    path_back = card_data['name'].lower().replace(" ", "_") + "_back.png"
+    canvas = functions.add_print_border(canvas, border_color, path_front)
+    canvas_back = functions.add_print_border(canvas_back, border_color, path_back)
 
   outputs.append({
     "front": canvas,

@@ -18,6 +18,7 @@ This Python script takes a csv file and profile photos and creates stylized trad
     - All 4 questions and answers must be present
 2. Add the csv file to the root directory and label it `data.csv`
 3. Add images for the cards to a directory titled `images` in the root directory.
+    - Your images need to have an aspect ratio of `5:7` or it will be distorted. `500x700px` is recommended
     - Make sure an image exists for every entry to the `image` column in `data.csv` and that they are spelled correctly and case sensitive.
 4. Open a terminal in the root directory and run:
       ```
