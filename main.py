@@ -5,7 +5,15 @@ import os
 import json
 import functions
 
-PRINT = True
+# ask whether we should use print version or not
+response = ''
+while True:
+  response = input("Would you like to use print format? (y/n): ")
+  if (response.lower() in ('y', 'n')):
+    break
+  print("Invalid input. Please enter 'y' or 'n'.")
+
+PRINT = response.lower() == 'y'
 
 # Colors for border based on department
 border_colors = {

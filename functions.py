@@ -124,6 +124,9 @@ def read_csv_file():
     # Iterate through subsequent rows
     i = 0
     for row in reader:
+      # check that years is an integer
+      if not row[3].isdigit():
+        raise RuntimeError(f"The value in the years column at row {i + 2} is not an integer.")
       try:
         positions = row[2].split('; ')
         data.append({
