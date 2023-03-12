@@ -6,6 +6,25 @@
       "Assistant Director",
       "Boat Driver"
     ],
-    "years": 8
+    "years": 8,
+    "department": "leadership",
+    "info": [
+      {
+        "title": "Super Power",
+        "text": "Flying"
+      },
+      {
+        "title": "Favorite Bible Verse",
+        "text": "Proverbs 3:6"
+      },
+      {
+        "title": "Favorite Quote",
+        "text": "\"It's how you deal with failure that determines how you achieve success.\" - David Feherty"
+      },
+      {
+        "title": "Biggest Fear",
+        "text": "Being unsure on important decisions"
+      }
+    ]
   }
 }
