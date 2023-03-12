@@ -32,6 +32,8 @@ with open('data.json', 'r') as f:
 
 data = data.values()
 
+outputs = []
+
 for card_data in data:
   border_color = border_colors[card_data['department']]
   # Front of Card ==================================
@@ -93,6 +95,24 @@ for card_data in data:
 
   # Save both sides ===============================
 
+  # add print borders
+  if PRINT:
+    canvas = functions.add_print_border(canvas, border_color)
+    canvas_back = functions.add_print_border(canvas_back, border_color)
+
+  outputs.append({
+    "front": canvas,
+    "back": canvas_back,
+    "name": card_data['name']
+  })
+
+  # Save the trading card as a PNG image
+  # canvas.save(f"{folder_path}/{card_data['img'].split('.')[0]}_front.png")
+  # canvas_back.save(f"{folder_path}/{card_data['img'].split('.')[0]}_back.png")
+  print("card made for " + card_data['name'])
+
+# print all the made files at once
+for output in outputs:
   # Get date for folder name
   current_datetime = datetime.datetime.now()
   formatted_datetime = current_datetime.strftime("%m-%d-%Y-%H%M-%S")
@@ -103,12 +123,10 @@ for card_data in data:
   if not os.path.exists(folder_path):
     os.makedirs(folder_path)
 
-  # add print borders
-  if PRINT:
-    canvas = functions.add_print_border(canvas, border_color)
-    canvas_back = functions.add_print_border(canvas_back, border_color)
+  # make name lowercase with underscores
+  name = output['name'].lower().replace(" ", "_")
 
-  # Save the trading card as a PNG image
-  canvas.save(f"{folder_path}/{card_data['img'].split('.')[0]}_front.png")
-  canvas_back.save(f"{folder_path}/{card_data['img'].split('.')[0]}_back.png")
-  print("Saved card for " + card_data['name'])
+  # save files
+  output['front'].save(f"{folder_path}/{name}_front.png")
+  output['back'].save(f"{folder_path}/{name}_back.png")
+  print("cards printed for " + name)
