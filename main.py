@@ -83,7 +83,7 @@ for card_data in data:
 
   # Create the folder to save the image
   # folder_path = "results/" + formatted_datetime
-  folder_path = "results"
+  folder_path = "output"
   if not os.path.exists(folder_path):
     os.makedirs(folder_path)
 
