@@ -76,8 +76,8 @@ def add_back_text(canvas, info):
   for pair in info:
     title = pair['title']
     title = title.upper()
-    title_font = ImageFont.truetype("fonts/TiltWarp-Regular.ttf", 35)
-    title_wrapper = textwrap.TextWrapper(width=20)
+    title_font = ImageFont.truetype("fonts/TiltWarp-Regular.ttf", 30)
+    title_wrapper = textwrap.TextWrapper(width=25)
     title_wrapped_text = title_wrapper.wrap(title)
 
     text = pair['text']
