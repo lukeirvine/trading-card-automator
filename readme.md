@@ -24,17 +24,20 @@ This Python script creates stylized trading cards from a spreadsheet. It was cre
       leadership, extreme, housekeeping, office, waterfront, activities, art, challenge, comms, dt, equestrian, kitchen, maintenance, survival, ultimate
       ```
     - All 4 questions and answers must be present
-2. Add the csv file to the root directory and label it `data.csv`
+2. Clone this repo onto your local machine. 
+    - [Learn how to clone](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) 
+    - [Get git](https://git-scm.com/downloads)
+3. Add the csv file to the root directory and label it `data.csv`
     - Note: you can get this from any spreadsheet by exporting it as a `csv`
-3. Add images for the cards to a directory titled `images` in the root directory.
+4. Add images for the cards to a directory titled `images` in the root directory.
     - Your images need to have an aspect ratio of `5:7` or it will be distorted. `500x700px` is recommended
     - Make sure an image exists for every entry to the `image` column in `data.csv` and that they are spelled correctly and case sensitive.
-4. Open a terminal in the root directory and run:
+5. Open a terminal in the root directory and run:
       ```
       python3 main.py
       ```
     This of course assumes you have python downloaded on your machine. If you don't have python, [get it here](https://www.python.org/downloads/).
-5. The script will ask you if you'd like to save plain images or wrap the images in a border used for printing.
-6. The script should let you know if any of the above rules are broken.
-7. Once the script has finished, your images will appear in the `output` folder. 
+6. The script will ask you if you'd like to save plain images or wrap the images in a border used for printing.
+7. The script should let you know if any of the above rules are broken.
+8. Once the script has finished, your images will appear in the `output` folder. 
     - Be sure to empty this folder before running the script again as it will write over files with the same name without warning.
