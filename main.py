@@ -9,7 +9,21 @@ PRINT = True
 
 # Colors for border based on department
 border_colors = {
-  'leadership': (60, 89, 115)
+  'leadership': (60, 89, 115),
+  'extreme': (56, 65, 42),
+  'housekeeping': (59, 41, 58),
+  'office': (49, 47, 89),
+  'waterfront': (111, 166, 119),
+  'activities': (177, 74, 53),
+  'art': (146, 67, 83),
+  'challenge': (89, 155, 152),
+  'comms': (186, 118, 48),
+  'dt': (126, 46, 46),
+  'equestrian': (25, 89, 65),
+  'kitchen': (76, 20, 17),
+  'maintenance': (78, 78, 80),
+  'survival': (140, 88, 58),
+  'ultimate': (217, 109, 85)
 }
 
 # Get data for the cards
