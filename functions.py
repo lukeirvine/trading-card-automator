@@ -75,8 +75,9 @@ def add_back_text(canvas, info):
 
   for pair in info:
     title = pair['title']
-    title_font = ImageFont.truetype("fonts/TiltWarp-Regular.ttf", 38)
-    title_wrapper = textwrap.TextWrapper(width=25)
+    title = title.upper()
+    title_font = ImageFont.truetype("fonts/TiltWarp-Regular.ttf", 35)
+    title_wrapper = textwrap.TextWrapper(width=20)
     title_wrapped_text = title_wrapper.wrap(title)
 
     text = pair['text']
@@ -98,7 +99,7 @@ def add_back_text(canvas, info):
       draw.text((x_pos, y), line, fill=(255, 255, 255), font=text_font)
       y += text_font.getsize(line)[1]
     # margin below text
-    y += 15
+    y += 20
     
 def add_print_border(card, color, path):
   canvas = Image.new("RGB", (666, 915), color=color)
@@ -185,6 +186,10 @@ def check_data(data, border_colors):
     # check that name is valid
     if "/" in card['name']:
       raise RuntimeError(f"The name column on row {i + 2} should not contain '/'")
+    
+    # check that years is 12 or less
+    if card['years'] > 12:
+      raise RuntimeError(f"12 is the maximum number of stars allowed. Check row {i + 2} in the csv file.")
 
     # check that department is valid
     if card['department'] not in border_colors:
