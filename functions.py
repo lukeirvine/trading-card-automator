@@ -4,7 +4,7 @@ import csv
 import os
 from datetime import datetime
 
-def add_front_text(canvas, texts):
+def add_front_text(canvas, texts, outline_color):
   draw = ImageDraw.Draw(canvas)
   # set base margin
   y = canvas.height - 30
@@ -36,7 +36,15 @@ def add_front_text(canvas, texts):
     for line in wrapped_text:
       line_width = draw.textsize(line, font=font)[0]
       x_pos = (canvas.width - line_width) / 2
-      draw.text((x_pos, y), line, fill=(255, 255, 255), font=font)
+      fill_color = (255, 255, 255)
+      width = 2
+      # draw outline
+      draw.text((x_pos + width, y), line, fill=outline_color, font=font)
+      draw.text((x_pos - width, y), line, fill=outline_color, font=font)
+      draw.text((x_pos, y + width), line, fill=outline_color, font=font)
+      draw.text((x_pos, y - width), line, fill=outline_color, font=font)
+      # draw main text
+      draw.text((x_pos, y), line, fill=fill_color, font=font)
       y += font.getsize(line)[1]
     
     # adjust y for margin
@@ -71,35 +79,58 @@ def add_back_text(canvas, info):
   draw = ImageDraw.Draw(canvas)
 
   # set starting point
-  y = 150
+  y_start = 150
+  y = y_start
+  title_size = 30
+  title_wrap_width = 25
+  text_size = 22
+  text_wrap_width = 40
+  drawing = False
+  done = False
 
-  for pair in info:
-    title = pair['title']
-    title = title.upper()
-    title_font = ImageFont.truetype("fonts/TiltWarp-Regular.ttf", 30)
-    title_wrapper = textwrap.TextWrapper(width=25)
-    title_wrapped_text = title_wrapper.wrap(title)
+  # this loop will shrink font sizes until everything fits on the card
+  while not done:
+    for pair in info:
+      title = pair['title']
+      title = title.upper()
+      title_font = ImageFont.truetype("fonts/TiltWarp-Regular.ttf", title_size)
+      title_wrapper = textwrap.TextWrapper(width=title_wrap_width)
+      title_wrapped_text = title_wrapper.wrap(title)
 
-    text = pair['text']
-    text_font = ImageFont.truetype("fonts/TiltWarp-Regular.ttf", 22)
-    text_wrapper = textwrap.TextWrapper(width=40)
-    text_wrapped_text = text_wrapper.wrap(text)
+      text = pair['text']
+      text_font = ImageFont.truetype("fonts/TiltWarp-Regular.ttf", text_size)
+      text_wrapper = textwrap.TextWrapper(width=text_wrap_width)
+      text_wrapped_text = text_wrapper.wrap(text)
 
-    for line in title_wrapped_text:
-      line_width = draw.textsize(line, font=title_font)[0]
-      x_pos = (canvas.width - line_width) / 2
-      draw.text((x_pos, y), line, fill=(255, 255, 255), font=title_font)
-      y += title_font.getsize(line)[1]
-    # margin below title
-    y += 5
+      for line in title_wrapped_text:
+        line_width = draw.textsize(line, font=title_font)[0]
+        x_pos = (canvas.width - line_width) / 2
+        if drawing:
+          draw.text((x_pos, y), line, fill=(255, 255, 255), font=title_font)
+        y += title_font.getsize(line)[1]
+      # margin below title
+      y += 5
 
-    for line in text_wrapped_text:
-      line_width = draw.textsize(line, font=text_font)[0]
-      x_pos = (canvas.width - line_width) / 2
-      draw.text((x_pos, y), line, fill=(255, 255, 255), font=text_font)
-      y += text_font.getsize(line)[1]
-    # margin below text
-    y += 20
+      for line in text_wrapped_text:
+        line_width = draw.textsize(line, font=text_font)[0]
+        x_pos = (canvas.width - line_width) / 2
+        if drawing:
+          draw.text((x_pos, y), line, fill=(255, 255, 255), font=text_font)
+        y += text_font.getsize(line)[1]
+      # margin below text
+      y += 20
+    # determine next action based on how low we went
+    if drawing:
+      done = True
+    if y > 700:
+      title_size -= 1
+      title_wrap_width += 2
+      text_size -= 2
+      text_wrap_width += 5
+    else:
+      drawing = True
+    # reset y
+    y = y_start
     
 def add_print_border(card, color, path):
   canvas = Image.new("RGB", (666, 915), color=color)
@@ -131,7 +162,7 @@ def add_print_border(card, color, path):
 
 def read_csv_file():
   data = []
-  with open('data.csv', newline='') as csvfile:
+  with open('staff.csv', newline='') as csvfile:
     reader = csv.reader(csvfile, delimiter=',', quotechar='"')
 
     # consume the first row (header)
@@ -177,19 +208,20 @@ def read_csv_file():
 
 def check_data(data, border_colors):
   i = 0
+  errors = []
   for card in data:
     # check that image exists
     img_path = card['img']
     if not os.path.exists('images/' + img_path):
-      raise RuntimeError(f"The image \"{card['img']}\" for {card['name']} doesn't exist. Check line {i + 2} in the csv file.")
+      errors.append(f"IMAGE ERROR {i + 2}: The image \"{card['img']}\" for {card['name']} doesn't exist. Check line {i + 2} in the csv file.")
     
     # check that name is valid
     if "/" in card['name']:
-      raise RuntimeError(f"The name column on row {i + 2} should not contain '/'")
+      errors.append(f"The name column on row {i + 2} should not contain '/'")
     
     # check that years is 12 or less
     if card['years'] > 12:
-      raise RuntimeError(f"12 is the maximum number of stars allowed. Check row {i + 2} in the csv file.")
+      errors.append(f"12 is the maximum number of stars allowed. Check row {i + 2} in the csv file.")
 
     # check that department is valid
     if card['department'] not in border_colors:
@@ -197,7 +229,11 @@ def check_data(data, border_colors):
       for dep in border_colors.keys():
         error += dep + "\n"
       error += f"This error occurred in line {i + 2} of the csv file."
-      raise RuntimeError(error)
+      errors.append(error)
     
-    # check that info is valid
     i += 1
+  if len(errors) > 0:
+    error_str = "\n"
+    for error in errors:
+      error_str = error_str + "\n" + error
+    raise RuntimeError(f"There were {len(errors)} errors with your data:" + error_str)

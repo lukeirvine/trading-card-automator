@@ -81,7 +81,7 @@ for card_data in data:
     "width": 12,
     "margin_bottom": 5
   })
-  functions.add_front_text(canvas, texts)
+  functions.add_front_text(canvas, texts, border_color)
 
   # add stars
   functions.add_stars(canvas, card_data['years'])
