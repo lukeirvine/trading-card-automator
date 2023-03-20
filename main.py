@@ -1,4 +1,5 @@
 from PIL import Image, ImageDraw, ImageFont
+import PyPDF2
 import datetime
 import textwrap
 import os
@@ -34,6 +35,8 @@ border_colors = {
   'ultimate': (217, 109, 85)
 }
 
+used_departments = set()
+
 data = functions.read_csv_file()
 functions.check_data(data, border_colors)
 num_cards = len(data)
@@ -43,6 +46,10 @@ outputs = []
 
 for card_data in data:
   border_color = border_colors[card_data['department']]
+
+  # Add department to used_departments
+  used_departments.add(card_data["department"])
+
   # Front of Card ==================================
 
   # create a new image
@@ -112,7 +119,9 @@ for card_data in data:
   outputs.append({
     "front": canvas,
     "back": canvas_back,
-    "name": card_data['name']
+    "name": card_data['name'],
+    "department": card_data['department'],
+    "years": card_data["years"]
   })
   done_processing += 1
   print("\rDone Processing: " + str(done_processing) + "/" + str(num_cards), end="", flush=True)
@@ -122,24 +131,65 @@ print("")
 
 # print all the made files at once
 printed = 0
+# Create the folder to save the image
+# folder_path = "results/" + formatted_datetime
+folder_path = "output"
+if not os.path.exists(folder_path):
+  os.makedirs(folder_path)
+
+# make department folders
+for dept in used_departments:
+  if not os.path.exists(f"{folder_path}/{dept}"):
+    os.makedirs(f"{folder_path}/{dept}")
+  
+# File counts for pdf
+file_counts = {}
+
+# Save the files
 for output in outputs:
   # Get date for folder name
   current_datetime = datetime.datetime.now()
   formatted_datetime = current_datetime.strftime("%m-%d-%Y-%H%M-%S")
 
-  # Create the folder to save the image
-  # folder_path = "results/" + formatted_datetime
-  folder_path = "output"
-  if not os.path.exists(folder_path):
-    os.makedirs(folder_path)
-
   # make name lowercase with underscores
   name = output['name'].lower().replace(" ", "_")
 
+  # set frequency
+  frequency = 1
+  years = output["years"]
+  # 8 or more years
+  if years >= 8:
+    frequency = 2
+  # 6 or 7 years
+  elif years >= 6:
+    frequency = 3
+  # 4 or 5 years
+  elif years >= 4:
+    frequency = 4
+  # 2 or 3 years
+  elif years >= 2:
+    frequency = 5
+  # 1st year
+  elif years >= 1:
+    frequency = 6
+
+  file_prefix = f"{folder_path}/{output['department']}/{name}"
+  file_counts[file_prefix] = frequency
+
   # save files
-  output['front'].save(f"{folder_path}/{name}_front.png")
-  output['back'].save(f"{folder_path}/{name}_back.png")
+  output['front'].save(f"{file_prefix}_front.png")
+  output['back'].save(f"{file_prefix}_back.png")
   printed += 1
   print("\rPrinted: " + str(printed) + "/" + str(num_cards), end="", flush=True)
+
+# Save images to pdf with duplicates for frequency
+# if PRINT:
+#   pdf_path = 'mivoden-trading-cards.pdf'
+#   pdf = PyPDF2.PdfWriter()
+
+#   # add images
+#   for file_prefix in file_counts.keys():
+    
+
 # Print new line to end
 print("")
