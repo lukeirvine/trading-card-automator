@@ -124,7 +124,7 @@ for card_data in data:
     "years": card_data["years"]
   })
   done_processing += 1
-  print("\rDone Processing: " + str(done_processing) + "/" + str(num_cards), end="", flush=True)
+  print("\rProcessing Images: " + str(done_processing) + "/" + str(num_cards), end="", flush=True)
 
 # new line
 print("")
@@ -180,16 +180,12 @@ for output in outputs:
   output['front'].save(f"{file_prefix}_front.png")
   output['back'].save(f"{file_prefix}_back.png")
   printed += 1
-  print("\rPrinted: " + str(printed) + "/" + str(num_cards), end="", flush=True)
+  print("\rPrinting Images: " + str(printed) + "/" + str(num_cards), end="", flush=True)
 
 # Save images to pdf with duplicates for frequency
-# if PRINT:
-#   pdf_path = 'mivoden-trading-cards.pdf'
-#   pdf = PyPDF2.PdfWriter()
-
-#   # add images
-#   for file_prefix in file_counts.keys():
-    
+if PRINT:
+  functions.print_pdfs(folder_path, file_counts)
 
 # Print new line to end
-print("")
+if not PRINT:
+  print("")

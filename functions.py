@@ -237,3 +237,33 @@ def check_data(data, border_colors):
     for error in errors:
       error_str = error_str + "\n" + error
     raise RuntimeError(f"There were {len(errors)} errors with your data:" + error_str)
+  
+def print_pdfs(folder_path, file_counts):
+  print("\nSaving PDFs...")
+
+  # create pdf folder path if it doesn't exist
+  pdf_folder = f"{folder_path}/pdfs"
+  if not os.path.exists(pdf_folder):
+    os.makedirs(pdf_folder)
+
+  pdf_path = f'{pdf_folder}/mivoden-trading-cards.pdf'
+  pdf_rarity_path = f'{pdf_folder}/mivoden-trading-cards-with-rarity.pdf'
+
+  # add images
+  images = []
+  rarity_images = []
+  for file_prefix in file_counts.keys():
+    front = Image.open(f"{file_prefix}_front.png")
+    back = Image.open(f"{file_prefix}_back.png")
+    images.append(front)
+    images.append(back)
+    for i in range(file_counts[file_prefix]):
+      rarity_images.append(front)
+      rarity_images.append(back)
+  images[0].save(
+    pdf_path, "PDF", resolution=100.0, save_all=True, append_images=images[1:]
+  )
+  rarity_images[0].save(
+    pdf_rarity_path, "PDF" ,resolution=100.0, save_all=True, append_images=rarity_images[1:]
+  )
+  print("Print PDFs saved")
