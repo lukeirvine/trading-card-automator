@@ -267,3 +267,36 @@ def print_pdfs(folder_path, file_counts):
     pdf_rarity_path, "PDF" ,resolution=100.0, save_all=True, append_images=rarity_images[1:]
   )
   print("Print PDFs saved")
+
+def save_image(output, folder_path, file_counts):
+  # make name lowercase with underscores
+  name = output['name'].lower().replace(" ", "_")
+
+  # set frequency
+  frequency = 1
+  years = output["years"]
+  # 8 or more years
+  if years >= 8:
+    frequency = 2
+  # 6 or 7 years
+  elif years >= 6:
+    frequency = 2
+  # 4 or 5 years
+  elif years >= 4:
+    frequency = 3
+  # 3 years
+  elif years >= 3:
+    frequency = 3
+  # 2 years
+  elif years >= 2:
+    frequency = 4
+  # 1st year
+  elif years >= 1:
+    frequency = 4
+
+  file_prefix = f"{folder_path}/{output['department']}/{name}"
+  file_counts[file_prefix] = frequency
+
+  # save files
+  output['front'].save(f"{file_prefix}_front.png")
+  output['back'].save(f"{file_prefix}_back.png")

@@ -1,9 +1,6 @@
 from PIL import Image, ImageDraw, ImageFont
-import PyPDF2
 import datetime
-import textwrap
 import os
-import json
 import functions
 
 # ask whether we should use print version or not
@@ -107,8 +104,6 @@ for card_data in data:
   # Add text
   functions.add_back_text(canvas_back, card_data['info'])
 
-  # Save both sides ===============================
-
   # add print borders
   if PRINT:
     path_front = card_data['name'].lower().replace(" ", "_") + "_front.png"
@@ -129,8 +124,11 @@ for card_data in data:
 # new line
 print("")
 
+# Save both sides ===============================
+
 # print all the made files at once
 printed = 0
+
 # Create the folder to save the image
 # folder_path = "results/" + formatted_datetime
 folder_path = "output"
@@ -147,38 +145,7 @@ file_counts = {}
 
 # Save the files
 for output in outputs:
-  # Get date for folder name
-  current_datetime = datetime.datetime.now()
-  formatted_datetime = current_datetime.strftime("%m-%d-%Y-%H%M-%S")
-
-  # make name lowercase with underscores
-  name = output['name'].lower().replace(" ", "_")
-
-  # set frequency
-  frequency = 1
-  years = output["years"]
-  # 8 or more years
-  if years >= 8:
-    frequency = 2
-  # 6 or 7 years
-  elif years >= 6:
-    frequency = 3
-  # 4 or 5 years
-  elif years >= 4:
-    frequency = 4
-  # 2 or 3 years
-  elif years >= 2:
-    frequency = 5
-  # 1st year
-  elif years >= 1:
-    frequency = 6
-
-  file_prefix = f"{folder_path}/{output['department']}/{name}"
-  file_counts[file_prefix] = frequency
-
-  # save files
-  output['front'].save(f"{file_prefix}_front.png")
-  output['back'].save(f"{file_prefix}_back.png")
+  functions.save_image(output, folder_path, file_counts)
   printed += 1
   print("\rPrinting Images: " + str(printed) + "/" + str(num_cards), end="", flush=True)
 
