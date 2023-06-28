@@ -3,6 +3,9 @@ import datetime
 import os
 import functions
 
+CARD_WIDTH = 750
+CARD_HEIGHT = 1050
+
 # ask whether we should use print version or not
 response = ''
 while True:
@@ -29,7 +32,8 @@ border_colors = {
   'kitchen': (76, 20, 17),
   'maintenance': (78, 78, 80),
   'survival': (140, 88, 58),
-  'ultimate': (217, 109, 85)
+  'ultimate': (217, 109, 85),
+  'programming': (0, 0, 0)
 }
 
 used_departments = set()
@@ -50,13 +54,15 @@ for card_data in data:
   # Front of Card ==================================
 
   # create a new image
-  canvas = Image.new("RGB", (500, 700), color=(255, 255, 255))
+  canvas = Image.new("RGB", (CARD_WIDTH, CARD_HEIGHT), color=(255, 255, 255))
 
   # Load the image
   image = Image.open(os.path.join("images", card_data['img']))
 
   # Resize the image to fit the canvas
-  image = image.resize((500, 700))
+  # image = image.rotate(90)
+  # image = image.resize((CARD_WIDTH, CARD_HEIGHT))
+  image = functions.resize_and_crop_image(image, CARD_WIDTH, CARD_HEIGHT + 20)
 
   # Paste the image onto the card canvas
   canvas.paste(image, (0, 0))
@@ -68,9 +74,9 @@ for card_data in data:
 
   # Paste the logo
   logo = Image.open("materials/logo.png")
-  logo = logo.resize((95, 80))
+  logo = logo.resize((142, 120))
   paste_alpha = logo.split()[-1]
-  canvas.paste(logo, (10, 20), mask=paste_alpha)
+  canvas.paste(logo, (15, 30), mask=paste_alpha)
 
   # Add the name to the card
   texts = [{
@@ -93,13 +99,13 @@ for card_data in data:
   # Back of Card ==================================
 
   # Create canvas
-  canvas_back = Image.new("RGB", (500, 700), color=border_color)
+  canvas_back = Image.new("RGB", (CARD_WIDTH, CARD_HEIGHT), color=border_color)
 
   # Add brand
   brand = Image.open("materials/full-logo.png")
-  brand = brand.resize((300, 75))
+  brand = brand.resize((450, 112))
   paste_alpha = brand.split()[-1]
-  canvas_back.paste(brand, (100, 50), mask=paste_alpha)
+  canvas_back.paste(brand, (150, 75), mask=paste_alpha)
 
   # Add text
   functions.add_back_text(canvas_back, card_data['info'])

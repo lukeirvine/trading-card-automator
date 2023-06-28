@@ -3,11 +3,52 @@ import textwrap
 import csv
 import os
 from datetime import datetime
+import PyPDF2
+
+CARD_WIDTH = 750
+CARD_HEIGHT = 1050
+
+PRINT_WIDTH = 825
+PRINT_HEIGHT = 1125
+  
+from PIL import Image
+
+def resize_and_crop_image(image, new_width, new_height):
+  # Get the current width and height
+  current_width, current_height = image.size
+
+  # Calculate the aspect ratios
+  current_aspect_ratio = current_width / current_height
+  new_aspect_ratio = new_width / new_height
+
+  # Calculate the scale factor to resize the image
+  if new_aspect_ratio > current_aspect_ratio:
+    scale_factor = new_height / current_height
+  else:
+    scale_factor = new_width / current_width
+
+  # Calculate the new size with the preserved aspect ratio
+  resized_width = int(current_width * scale_factor)
+  resized_height = int(current_height * scale_factor)
+
+  # Resize the image while maintaining the aspect ratio
+  resized_image = image.resize((resized_width, resized_height), Image.ANTIALIAS)
+
+  # Calculate the coordinates for cropping
+  left = (resized_width - new_width) / 2
+  top = (resized_height - new_height) / 2
+  right = (resized_width + new_width) / 2
+  bottom = (resized_height + new_height) / 2
+
+  # Crop the image to the desired dimensions
+  cropped_image = resized_image.crop((left, top, right, bottom))
+
+  return cropped_image
 
 def add_front_text(canvas, texts, outline_color):
   draw = ImageDraw.Draw(canvas)
   # set base margin
-  y = canvas.height - 30
+  y = canvas.height - 45
 
   # wrap texts and get starting y
   for text in texts:
@@ -37,7 +78,7 @@ def add_front_text(canvas, texts, outline_color):
       line_width = draw.textsize(line, font=font)[0]
       x_pos = (canvas.width - line_width) / 2
       fill_color = (255, 255, 255)
-      width = 2
+      width = 3
       # draw outline
       draw.text((x_pos + width, y), line, fill=outline_color, font=font)
       draw.text((x_pos - width, y), line, fill=outline_color, font=font)
@@ -52,14 +93,16 @@ def add_front_text(canvas, texts, outline_color):
 
 def add_stars(canvas, years):
   star = Image.open("materials/star.png")
+  star = star.resize((60, 60))
   paste_alpha = star.split()[-1]
   for i in range(years):
-    x = 450 - ((i % 6) * 35)
-    y = 37 - (i // 6) * 30
+    x = 675 - ((i % 6) * 52)
+    y = 55 - (i // 6) * 45
     canvas.paste(star, (x, y), mask=paste_alpha)
 
 def set_border_color(path, new_color):
   image = Image.open(path)
+  image = image.resize((CARD_WIDTH, CARD_HEIGHT))
 
   # Convert image to RGB mode if it's in grayscale mode
   if image.mode == 'L':
@@ -79,12 +122,12 @@ def add_back_text(canvas, info):
   draw = ImageDraw.Draw(canvas)
 
   # set starting point
-  y_start = 150
+  y_start = 225
   y = y_start
-  title_size = 30
-  title_wrap_width = 25
-  text_size = 22
-  text_wrap_width = 40
+  title_size = 35
+  title_wrap_width = 34
+  text_size = 26
+  text_wrap_width = 55
   drawing = False
   done = False
 
@@ -109,7 +152,7 @@ def add_back_text(canvas, info):
           draw.text((x_pos, y), line, fill=(255, 255, 255), font=title_font)
         y += title_font.getsize(line)[1]
       # margin below title
-      y += 5
+      y += 7
 
       for line in text_wrapped_text:
         line_width = draw.textsize(line, font=text_font)[0]
@@ -118,11 +161,11 @@ def add_back_text(canvas, info):
           draw.text((x_pos, y), line, fill=(255, 255, 255), font=text_font)
         y += text_font.getsize(line)[1]
       # margin below text
-      y += 20
+      y += 30
     # determine next action based on how low we went
     if drawing:
       done = True
-    if y > 700:
+    if y > PRINT_HEIGHT:
       title_size -= 1
       title_wrap_width += 2
       text_size -= 2
@@ -133,29 +176,30 @@ def add_back_text(canvas, info):
     y = y_start
     
 def add_print_border(card, color, path):
-  canvas = Image.new("RGB", (666, 915), color=color)
+  canvas = Image.new("RGB", (PRINT_WIDTH, PRINT_HEIGHT), color=color)
 
   # add the print border
-  border = Image.open("materials/print-border.png")
+  border = Image.open("materials/print-border-5.png")
+  border = border.resize((PRINT_WIDTH, PRINT_HEIGHT))
   paste_alpha = border.split()[-1]
   canvas.paste(border, (0, 0), mask=paste_alpha)
 
   # add the card
-  canvas.paste(card, ((666 - 500) // 2, (915 - 700) // 2))
+  canvas.paste(card, ((PRINT_WIDTH - CARD_WIDTH) // 2, (PRINT_HEIGHT - CARD_HEIGHT) // 2))
 
   # add time
-  font = ImageFont.truetype("fonts/PTMono-Regular.ttf", 13)
+  font = ImageFont.truetype("fonts/PTMono-Regular.ttf", 19)
   draw = ImageDraw.Draw(canvas)
   now = datetime.now()
   formatted_time = now.strftime("%m/%d/%y  %I:%M:%S %p")
   time_width = draw.textsize(formatted_time, font=font)[0]
   time_height = font.getsize(formatted_time)[1]
-  x = canvas.width - time_width - 10
-  y = canvas.height - time_height - 10
-  draw.text((x, y), formatted_time, fill=(0, 0, 0), font=font)
+  x = canvas.width - time_width - 15
+  y = canvas.height - time_height - 15
+  # draw.text((x, y), formatted_time, fill=(0, 0, 0), font=font)
 
   # add file name
-  draw.text((10, y), path, fill=(0, 0, 0), font=font)
+  # draw.text((15, y), path, fill=(0, 0, 0), font=font)
 
   return canvas
 
@@ -237,7 +281,7 @@ def check_data(data, border_colors):
     for error in errors:
       error_str = error_str + "\n" + error
     raise RuntimeError(f"There were {len(errors)} errors with your data:" + error_str)
-  
+
 def print_pdfs(folder_path, file_counts):
   print("\nSaving PDFs...")
 
@@ -277,22 +321,22 @@ def save_image(output, folder_path, file_counts):
   years = output["years"]
   # 8 or more years
   if years >= 8:
-    frequency = 2
+    frequency = 1
   # 6 or 7 years
   elif years >= 6:
-    frequency = 2
+    frequency = 1
   # 4 or 5 years
   elif years >= 4:
-    frequency = 3
+    frequency = 2
   # 3 years
   elif years >= 3:
-    frequency = 3
+    frequency = 2
   # 2 years
   elif years >= 2:
-    frequency = 4
+    frequency = 3
   # 1st year
   elif years >= 1:
-    frequency = 4
+    frequency = 3
 
   file_prefix = f"{folder_path}/{output['department']}/{name}"
   file_counts[file_prefix] = frequency
